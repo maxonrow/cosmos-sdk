@@ -1,6 +1,7 @@
 package iavl
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"sync"
@@ -44,6 +45,8 @@ type Store struct {
 	// By default this value should be set the same across all nodes,
 	// so that nodes can know the waypoints their peers store.
 	storeEvery int64
+
+	updated bool
 }
 
 // LoadStore returns an IAVL Store as a CommitKVStore. Internally it will load the
@@ -65,6 +68,9 @@ func LoadStore(db dbm.DB, id types.CommitID, pruning types.PruningOptions, lazyL
 
 	iavl := UnsafeNewStore(tree, int64(0), int64(0))
 	iavl.SetPruning(pruning)
+	if iavl.tree.Version() == 0 {
+		iavl.updated = true // genesis block
+	}
 
 	return iavl, nil
 }
@@ -77,6 +83,7 @@ func UnsafeNewStore(tree *iavl.MutableTree, numRecent int64, storeEvery int64) *
 		tree:       tree,
 		numRecent:  numRecent,
 		storeEvery: storeEvery,
+		updated:    false,
 	}
 }
 
@@ -87,7 +94,10 @@ func UnsafeNewStore(tree *iavl.MutableTree, numRecent int64, storeEvery int64) *
 // result in a panic.
 func (st *Store) GetImmutable(version int64) (*Store, error) {
 	if !st.VersionExists(version) {
-		return nil, iavl.ErrVersionDoesNotExist
+		version = st.LastCommitID().Version
+		if !st.VersionExists(version) {
+			return nil, iavl.ErrVersionDoesNotExist
+		}
 	}
 
 	iTree, err := st.tree.GetImmutable(version)
@@ -104,6 +114,12 @@ func (st *Store) GetImmutable(version int64) (*Store, error) {
 
 // Implements Committer.
 func (st *Store) Commit() types.CommitID {
+	if !st.updated {
+		return st.LastCommitID()
+	}
+	// Now update the tree and set the flag false for next height
+	st.updated = false
+
 	// Save a new version.
 	hash, version, err := st.tree.SaveVersion()
 	if err != nil {
@@ -165,7 +181,15 @@ func (st *Store) CacheWrapWithTrace(w io.Writer, tc types.TraceContext) types.Ca
 
 // Implements types.KVStore.
 func (st *Store) Set(key, value []byte) {
+	if len(value) == 0 {
+		panic(fmt.Sprintf("Should avoid setting nil as value for %s", string(key)))
+	}
 	types.AssertValidValue(value)
+	_value := st.Get(key)
+	if bytes.Compare(value, _value) == 0 {
+		return
+	}
+	st.updated = true
 	st.tree.Set(key, value)
 }
 
@@ -182,6 +206,9 @@ func (st *Store) Has(key []byte) (exists bool) {
 
 // Implements types.KVStore.
 func (st *Store) Delete(key []byte) {
+	if st.tree.Has(key) {
+		st.updated = true
+	}
 	st.tree.Remove(key)
 }
 

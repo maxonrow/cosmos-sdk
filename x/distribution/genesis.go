@@ -20,7 +20,6 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, supplyKeeper types.SupplyKeeper
 	for _, dwi := range data.DelegatorWithdrawInfos {
 		keeper.SetDelegatorWithdrawAddr(ctx, dwi.DelegatorAddress, dwi.WithdrawAddress)
 	}
-	keeper.SetPreviousProposerConsAddr(ctx, data.PreviousProposer)
 	for _, rew := range data.OutstandingRewards {
 		keeper.SetValidatorOutstandingRewards(ctx, rew.ValidatorAddress, rew.OutstandingRewards)
 		moduleHoldings = moduleHoldings.Add(rew.OutstandingRewards)
@@ -73,7 +72,6 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) types.GenesisState {
 		})
 		return false
 	})
-	pp := keeper.GetPreviousProposerConsAddr(ctx)
 	outstanding := make([]types.ValidatorOutstandingRewardsRecord, 0)
 	keeper.IterateValidatorOutstandingRewards(ctx,
 		func(addr sdk.ValAddress, rewards types.ValidatorOutstandingRewards) (stop bool) {
@@ -139,5 +137,5 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) types.GenesisState {
 		},
 	)
 	return types.NewGenesisState(feePool, communityTax, baseProposerRewards, bonusProposerRewards, withdrawAddrEnabled,
-		dwi, pp, outstanding, acc, his, cur, dels, slashes)
+		dwi, nil, outstanding, acc, his, cur, dels, slashes)
 }
