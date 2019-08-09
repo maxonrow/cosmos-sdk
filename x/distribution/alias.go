@@ -106,7 +106,6 @@ var (
 
 	// variable aliases
 	FeePoolKey                           = keeper.FeePoolKey
-	ProposerKey                          = keeper.ProposerKey
 	ValidatorOutstandingRewardsPrefix    = keeper.ValidatorOutstandingRewardsPrefix
 	DelegatorWithdrawAddrPrefix          = keeper.DelegatorWithdrawAddrPrefix
 	DelegatorStartingInfoPrefix          = keeper.DelegatorStartingInfoPrefix

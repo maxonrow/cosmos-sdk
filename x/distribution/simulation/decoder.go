@@ -22,9 +22,6 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB cmn.KVPair) string {
 		cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &feePoolB)
 		return fmt.Sprintf("%v\n%v", feePoolA, feePoolB)
 
-	case bytes.Equal(kvA.Key[:1], keeper.ProposerKey):
-		return fmt.Sprintf("%v\n%v", sdk.ConsAddress(kvA.Value), sdk.ConsAddress(kvB.Value))
-
 	case bytes.Equal(kvA.Key[:1], keeper.ValidatorOutstandingRewardsPrefix):
 		var rewardsA, rewardsB types.ValidatorOutstandingRewards
 		cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &rewardsA)

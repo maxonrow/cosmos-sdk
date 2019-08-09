@@ -59,24 +59,6 @@ func (k Keeper) SetFeePool(ctx sdk.Context, feePool types.FeePool) {
 	store.Set(FeePoolKey, b)
 }
 
-// get the proposer public key for this block
-func (k Keeper) GetPreviousProposerConsAddr(ctx sdk.Context) (consAddr sdk.ConsAddress) {
-	store := ctx.KVStore(k.storeKey)
-	b := store.Get(ProposerKey)
-	if b == nil {
-		panic("Previous proposer not set")
-	}
-	k.cdc.MustUnmarshalBinaryLengthPrefixed(b, &consAddr)
-	return
-}
-
-// set the proposer public key for this block
-func (k Keeper) SetPreviousProposerConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) {
-	store := ctx.KVStore(k.storeKey)
-	b := k.cdc.MustMarshalBinaryLengthPrefixed(consAddr)
-	store.Set(ProposerKey, b)
-}
-
 // get the starting info associated with a delegator
 func (k Keeper) GetDelegatorStartingInfo(ctx sdk.Context, val sdk.ValAddress, del sdk.AccAddress) (period types.DelegatorStartingInfo) {
 	store := ctx.KVStore(k.storeKey)
