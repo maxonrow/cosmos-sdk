@@ -192,6 +192,10 @@ func (coins Coins) IsValid() bool {
 		if err := ValidateDenom(coins[0].Denom); err != nil {
 			return false
 		}
+		// MXW supportts zero coins
+		if coins[0].IsZero() {
+			return true
+		}
 		return coins[0].IsPositive()
 	default:
 		// check single coin case
@@ -208,7 +212,7 @@ func (coins Coins) IsValid() bool {
 				return false
 			}
 			if !coin.IsPositive() {
-				return false
+				return coin.IsZero() // MXW supportts zero coins
 			}
 
 			// we compare each coin against the last denom
