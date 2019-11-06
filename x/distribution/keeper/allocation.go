@@ -45,7 +45,7 @@ func (k Keeper) AllocateTokens(
 	communityTax := k.GetCommunityTax(ctx)
 	voteMultiplier := sdk.OneDec().Sub(communityTax)
 
-	logger.Info("Total fee: %s, Tax:%s", remaining, communityTax)
+	logger.Info("Fee calculation", "Total fee", remaining, "Tax", communityTax)
 
 	// allocate tokens proportionally to voting power
 	// TODO consider parallelizing later, ref https://github.com/cosmos/cosmos-sdk/pull/3099#discussion_r246276376
