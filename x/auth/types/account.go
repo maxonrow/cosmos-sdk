@@ -27,6 +27,7 @@ type BaseAccount struct {
 	PubKey        crypto.PubKey  `json:"public_key" yaml:"public_key"`
 	AccountNumber uint64         `json:"account_number" yaml:"account_number"`
 	Sequence      uint64         `json:"sequence" yaml:"sequence"`
+	MultiSig      *sdk.MultiSig  `json:"multisig,omitempty" yaml:"multisig,omitempty"`
 }
 
 // NewBaseAccount creates a new BaseAccount object
@@ -113,6 +114,7 @@ type baseAccountPretty struct {
 	PubKey        string         `json:"public_key" yaml:"public_key"`
 	AccountNumber uint64         `json:"account_number" yaml:"account_number"`
 	Sequence      uint64         `json:"sequence" yaml:"sequence"`
+	MultiSig      *sdk.MultiSig  `json:"multisig,omitempty" yaml:"multisig,omitempty"`
 }
 
 func (acc BaseAccount) String() string {
@@ -126,6 +128,7 @@ func (acc BaseAccount) MarshalYAML() (interface{}, error) {
 		Address:       acc.Address,
 		AccountNumber: acc.AccountNumber,
 		Sequence:      acc.Sequence,
+		MultiSig:      acc.MultiSig,
 	}
 
 	if acc.PubKey != nil {
@@ -151,6 +154,7 @@ func (acc BaseAccount) MarshalJSON() ([]byte, error) {
 		Address:       acc.Address,
 		AccountNumber: acc.AccountNumber,
 		Sequence:      acc.Sequence,
+		MultiSig:      acc.MultiSig,
 	}
 
 	if acc.PubKey != nil {
@@ -184,6 +188,16 @@ func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 	acc.Address = alias.Address
 	acc.AccountNumber = alias.AccountNumber
 	acc.Sequence = alias.Sequence
+	acc.MultiSig = alias.MultiSig
 
+	return nil
+}
+
+func (acc BaseAccount) GetMultiSig() *sdk.MultiSig {
+	return acc.MultiSig
+}
+
+func (acc *BaseAccount) SetMultiSig(multisig *sdk.MultiSig) error {
+	acc.MultiSig = multisig
 	return nil
 }

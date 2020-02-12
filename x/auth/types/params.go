@@ -116,27 +116,27 @@ func validateTxSigLimit(i interface{}) error {
 }
 
 func validateSigVerifyCostED25519(i interface{}) error {
-	v, ok := i.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
+	// v, ok := i.(uint64)
+	// if !ok {
+	// 	return fmt.Errorf("invalid parameter type: %T", i)
+	// }
 
-	if v == 0 {
-		return fmt.Errorf("invalid ED25519 signature verification cost: %d", v)
-	}
+	// if v == 0 {
+	// 	return fmt.Errorf("invalid ED25519 signature verification cost: %d", v)
+	// }
 
 	return nil
 }
 
 func validateSigVerifyCostSecp256k1(i interface{}) error {
-	v, ok := i.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
+	// v, ok := i.(uint64)
+	// if !ok {
+	// 	return fmt.Errorf("invalid parameter type: %T", i)
+	// }
 
-	if v == 0 {
-		return fmt.Errorf("invalid SECK256k1 signature verification cost: %d", v)
-	}
+	// if v == 0 {
+	// 	return fmt.Errorf("invalid SECK256k1 signature verification cost: %d", v)
+	// }
 
 	return nil
 }
@@ -155,14 +155,14 @@ func validateMaxMemoCharacters(i interface{}) error {
 }
 
 func validateTxSizeCostPerByte(i interface{}) error {
-	v, ok := i.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
-	}
+	// v, ok := i.(uint64)
+	// if !ok {
+	// 	return fmt.Errorf("invalid parameter type: %T", i)
+	// }
 
-	if v == 0 {
-		return fmt.Errorf("invalid tx size cost per byte: %d", v)
-	}
+	// if v == 0 {
+	// 	return fmt.Errorf("invalid tx size cost per byte: %d", v)
+	// }
 
 	return nil
 }
