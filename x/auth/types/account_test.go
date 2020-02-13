@@ -82,6 +82,8 @@ func TestBaseAccountMarshal(t *testing.T) {
 	require.Nil(t, err)
 	err = acc.SetCoins(someCoins)
 	require.Nil(t, err)
+	multisig := &sdk.MultiSig{Owner: addr, Threshold: 2}
+	acc.SetMultiSig(multisig)
 
 	// need a codec for marshaling
 	cdc := codec.New()

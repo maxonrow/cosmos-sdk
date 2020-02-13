@@ -36,6 +36,9 @@ type Account interface {
 
 	// Ensure that account implements stringer
 	String() string
+
+	GetMultiSig() *sdk.MultiSig
+	SetMultiSig(signers *sdk.MultiSig) error
 }
 
 // GenesisAccounts defines a slice of GenesisAccount objects
