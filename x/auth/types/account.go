@@ -2,8 +2,8 @@ package types
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/tendermint/tendermint/crypto"
@@ -29,7 +29,7 @@ type BaseAccount struct {
 	PubKey        crypto.PubKey  `json:"public_key" yaml:"public_key"`
 	AccountNumber uint64         `json:"account_number" yaml:"account_number"`
 	Sequence      uint64         `json:"sequence" yaml:"sequence"`
-	MultiSig      *sdk.MultiSig  `json:"multisig,omitempty" yaml:"multisig,omitempty"`
+	MultiSig      *MultiSig      `json:"multisig,omitempty" yaml:"multisig,omitempty"`
 }
 
 // NewBaseAccount creates a new BaseAccount object
@@ -137,7 +137,7 @@ type baseAccountPretty struct {
 	PubKey        string         `json:"public_key" yaml:"public_key"`
 	AccountNumber uint64         `json:"account_number" yaml:"account_number"`
 	Sequence      uint64         `json:"sequence" yaml:"sequence"`
-	MultiSig      *sdk.MultiSig  `json:"multisig,omitempty" yaml:"multisig,omitempty"`
+	MultiSig      *MultiSig      `json:"multisig,omitempty" yaml:"multisig,omitempty"`
 }
 
 func (acc BaseAccount) String() string {
@@ -191,13 +191,13 @@ func (acc BaseAccount) MarshalJSON() ([]byte, error) {
 		alias.PubKey = pks
 	}
 
-	return json.Marshal(alias)
+	return ModuleCdc.MarshalJSON(alias)
 }
 
 // UnmarshalJSON unmarshals raw JSON bytes into a BaseAccount.
 func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 	var alias baseAccountPretty
-	if err := json.Unmarshal(bz, &alias); err != nil {
+	if err := ModuleCdc.UnmarshalJSON(bz, &alias); err != nil {
 		return err
 	}
 
@@ -219,11 +219,32 @@ func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 	return nil
 }
 
-func (acc BaseAccount) GetMultiSig() *sdk.MultiSig {
+func (acc BaseAccount) GetMultiSig() exported.MultiSig {
 	return acc.MultiSig
 }
 
-func (acc *BaseAccount) SetMultiSig(multisig *sdk.MultiSig) error {
-	acc.MultiSig = multisig
+func (acc *BaseAccount) SetMultiSig(multisig exported.MultiSig) error {
+	mg, ok := multisig.(*MultiSig)
+	if !ok {
+		return fmt.Errorf("Invalid MultiSig")
+	}
+	acc.MultiSig = mg
 	return nil
+}
+
+func (acc *BaseAccount) IsMultiSig() bool {
+	return acc.MultiSig != nil
+}
+
+func (acc *BaseAccount) IsSigner(signer sdk.AccAddress) bool {
+	if acc.IsMultiSig() {
+		for _, sig := range acc.MultiSig.Signers {
+			if signer.Equals(sig) {
+				return true
+			}
+		}
+		return false
+	}
+
+	return acc.Address.Equals(signer)
 }

@@ -37,8 +37,35 @@ type Account interface {
 	// Ensure that account implements stringer
 	String() string
 
-	GetMultiSig() *sdk.MultiSig
-	SetMultiSig(signers *sdk.MultiSig) error
+	GetMultiSig() MultiSig
+	SetMultiSig(signers MultiSig) error
+	IsMultiSig() bool
+	IsSigner(signer sdk.AccAddress) bool
+}
+
+type MultiSig interface {
+	AddPendingTx(tx sdk.Tx, sender sdk.AccAddress) (PendingTx, error)
+	GetPendingTx(txID uint64) PendingTx
+	NumOfPendingTxa() int
+	ContainTx(txID uint64) bool
+	IsOwner(owner sdk.AccAddress) bool
+	GetSigners() []sdk.AccAddress
+	GetThreshold() int
+	GetOwner() sdk.AccAddress
+	RemoveTx(txID uint64) bool
+	GetCounter() uint64
+	CheckTx(tx sdk.Tx) (uint64, bool)
+	UpdateSigners(signers []sdk.AccAddress, threshold int) error
+	UpdateOwner(owner sdk.AccAddress) error
+	IsMetric(txID uint64) bool
+	AddSignature(txID uint64, signer sdk.AccAddress, sig []byte) (PendingTx, error)
+}
+
+type PendingTx interface {
+	GetID() uint64
+	GetTx() sdk.Tx
+	GetSender() sdk.AccAddress
+	IsSignedBy(signer sdk.AccAddress) bool
 }
 
 // GenesisAccounts defines a slice of GenesisAccount objects

@@ -54,9 +54,10 @@ func (tx StdTx) ValidateBasic() sdk.Error {
 	if len(stdSigs) == 0 {
 		return sdk.ErrNoSignatures("no signers")
 	}
-	if len(stdSigs) != len(tx.GetSigners()) {
-		return sdk.ErrUnauthorized("wrong number of signers")
-	}
+	// Commented in favour of multisig
+	// if len(stdSigs) != len(tx.GetSigners()) {
+	// 	return sdk.ErrUnauthorized("wrong number of signers")
+	// }
 
 	return nil
 }
