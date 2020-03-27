@@ -180,10 +180,11 @@ func SignStdTx(
 
 	addr := info.GetPubKey().Address()
 
+	// In Maxonrow signer can be differnets than Sender for multi-sig transactions
 	// check whether the address is a signer
-	if !isTxSigner(sdk.AccAddress(addr), stdTx.GetSigners()) {
-		return signedStdTx, fmt.Errorf("%s: %s", errInvalidSigner, name)
-	}
+	//if !isTxSigner(sdk.AccAddress(addr), stdTx.GetSigners()) {
+	//	return signedStdTx, fmt.Errorf("%s: %s", errInvalidSigner, name)
+	//}
 
 	if !offline {
 		txBldr, err = populateAccountFromState(txBldr, cliCtx, sdk.AccAddress(addr))
