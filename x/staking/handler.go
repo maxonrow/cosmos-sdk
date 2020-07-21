@@ -23,14 +23,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case types.MsgEditValidator:
 			return handleMsgEditValidator(ctx, msg, k)
 
-		case types.MsgDelegate:
-			return handleMsgDelegate(ctx, msg, k)
+		// case types.MsgDelegate:
+		// 	return handleMsgDelegate(ctx, msg, k)
 
-		case types.MsgBeginRedelegate:
-			return handleMsgBeginRedelegate(ctx, msg, k)
+		// case types.MsgBeginRedelegate:
+		// 	return handleMsgBeginRedelegate(ctx, msg, k)
 
-		case types.MsgUndelegate:
-			return handleMsgUndelegate(ctx, msg, k)
+		// case types.MsgUndelegate:
+		// 	return handleMsgUndelegate(ctx, msg, k)
 
 		default:
 			errMsg := fmt.Sprintf("unrecognized staking message type: %T", msg)
